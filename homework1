@@ -12,4 +12,9 @@ plt.boxplot(values)
 # %%
 hitters = load_data('Hitters')
 
-print(hitters.to_string())
+print(hitters.shape)
+
+# %% 
+medians = hitters.median(numeric_only=True)
+
+print(medians)
