@@ -17,4 +17,92 @@ print(hitters.shape)
 # %% 
 medians = hitters.median(numeric_only=True)
 
-print(medians)
+#print(medians)
+
+# %%
+#Creates a pie chart containing the distribution of Hits, Walks, or Neither in the league for all At Bats
+at_bat = hitters['AtBat'].sum()
+hits = hitters['Hits'].sum()
+walks = hitters['Walks'].sum()
+neither = at_bat - (hits + walks)
+
+parts = [hits, walks, neither]
+labels = ['Hits', 'Walks', 'Neither']
+
+plt.pie(parts, labels=labels, autopct='%1.1f%%', startangle=90)
+plt.show()
+
+# %%
+#Prints number of rows missing salary data
+missing = hitters['Salary'].isna().sum()
+print(missing)
+# %%
+#Prints first 20 rows of data
+hitters.head(20)
+# %%
+salaries =  hitters['Salary'].dropna()
+plt.hist(salaries,bins=25)
+plt.xlabel('Salary in 1000s')
+plt.ylabel('Frequency')
+plt.show()
+# %%
+# Pairwise scatterplots for each of the six career metrics with Salary
+#CAtBat	CHits	CHmRun	CRuns	CRBI	CWalks
+rows =  hitters[hitters['Salary'].notna()]
+salaryRows = rows['Salary']
+plt.scatter(rows['CAtBat'], salaryRows)
+plt.xlabel('Career At Bats')
+plt.ylabel('Salary')
+plt.show()
+
+plt.scatter(rows['CHits'], salaryRows)
+plt.xlabel('Career Hits')
+plt.ylabel('Salary')
+plt.show()
+
+plt.scatter(rows['CHmRun'], salaryRows)
+plt.xlabel('Career Home Runs')
+plt.ylabel('Salary')
+plt.show()
+
+plt.scatter(rows['CRuns'], salaryRows)
+plt.xlabel('Career Runs')
+plt.ylabel('Salary')
+plt.show()
+
+plt.scatter(rows['CRBI'], salaryRows)
+plt.xlabel('Career RBI')
+plt.ylabel('Salary')
+plt.show()
+
+plt.scatter(rows['CWalks'], salaryRows)
+plt.xlabel('Career Walks')
+plt.ylabel('Salary')
+plt.show()
+
+
+# %%
+# Finding the mean salary for each division and determining the division which pays a grater total sum
+
+salaried = hitters.dropna(subset=['Salary'])
+division_mean = salaried.groupby('Division',observed=True)['Salary'].mean()
+print(division_mean)
+division_total = salaried.groupby('Division',observed=True)['Salary'].sum()
+print(division_total)
+# %%
+long_career = salaried[salaried['Years'] > 12]['Salary']
+short_career = salaried[salaried['Years'] < 5]['Salary']
+
+plt.boxplot([long_career, short_career], labels=['Long Career', 'Short Career'])
+plt.xticks([1,2], ['Old', 'Young'])
+plt.ylabel('Salary in thousands of dollars')
+
+# %%
+
+#league, division, salary, and career batting average of highest career batting avg player
+hitters['CBatAvg'] = hitters['CHits'] / hitters['CAtBat']
+league_high_row = hitters['CBatAvg'].idxmax()
+print(hitters.iloc[league_high_row])
+# %%
+top5 = hitters.nlargest(5,'CBatAvg')
+print(top5)
